@@ -1,0 +1,52 @@
+<div class="main-content">
+    <div class="panel-header"></div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Gestión de Partidas</h4>
+            <button class="btn btn-primary" (click)="crearPartida()">Nueva Partida</button>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario ID</th>
+                        <th>Juego ID</th>
+                        <th>Costo Apuesta</th>
+                        <th>Estado</th>
+                        <th>Premio ID</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let partida of partidas">
+                        <td>{{ partida.id }}</td>
+                        <td>{{ partida.usuario_id }}</td>
+                        <td>{{ partida.juego_id }}</td>
+                        <td>{{ partida.costo_apuesta | currency:'COP' }}</td>
+                        <td>
+                            <span [ngClass]="{
+                'badge badge-success': partida.estado === 'Ganada',
+                'badge badge-danger': partida.estado === 'Perdida',
+                'badge badge-warning': partida.estado === 'En curso',
+                'badge badge-secondary': partida.estado === 'Cancelada'
+              }">
+                                {{ partida.estado }}
+                            </span>
+                        </td>
+                        <td>{{ partida.premio_id || '—' }}</td>
+                        <td>
+                            <div class="product-actions">
+                                <button class="btn btn-sm btn-info" (click)="editarPartida(partida)">Editar</button>
+                                <button class="btn btn-sm btn-danger"
+                                    (click)="eliminarPartida(partida)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

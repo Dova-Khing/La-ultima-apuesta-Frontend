@@ -1,0 +1,46 @@
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Gestión de Premios</h2>
+
+    <div class="text-end mb-3">
+        <button class="btn btn-success" (click)="crearPremio()">
+            Crear Premio
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>ID</th>
+                    <th>ID del Juego</th>
+                    <th>Descripción</th>
+                    <th>Valor</th>
+                    <th>Creado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let premio of premios">
+                    <td class="text-center">{{ premio.id }}</td>
+                    <td class="text-center">{{ premio.juego_id }}</td>
+                    <td>{{ premio.descripcion }}</td>
+                    <td class="text-end">{{ premio.valor | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                    <td class="text-center">{{ premio.creado_por || '—' }}</td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm me-2" (click)="editarPremio(premio)">
+                            Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm" (click)="eliminarPremio(premio)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="premios.length === 0">
+                    <td colspan="6" class="text-center text-muted py-3">
+                        No hay premios registrados.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

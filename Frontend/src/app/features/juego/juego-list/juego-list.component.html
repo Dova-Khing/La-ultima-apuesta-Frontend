@@ -1,0 +1,40 @@
+<div class="main-content">
+    <div class="panel-header"></div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Gestión de Juegos</h4>
+            <button class="btn btn-primary" (click)="crearJuego()">Nuevo Juego</button>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Costo Base</th>
+                        <th>Creado Por</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let juego of juegos">
+                        <td>{{ juego.id }}</td>
+                        <td>{{ juego.nombre }}</td>
+                        <td>{{ juego.descripcion || '—' }}</td>
+                        <td>{{ juego.costo_base | currency:'COP' }}</td>
+                        <td>{{ juego.creado_por || '—' }}</td>
+                        <td>
+                            <div class="product-actions">
+                                <button class="btn btn-sm btn-info" (click)="editarJuego(juego)">Editar</button>
+                                <button class="btn btn-sm btn-danger" (click)="eliminarJuego(juego)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

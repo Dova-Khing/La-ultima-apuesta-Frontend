@@ -1,0 +1,30 @@
+<div class="container">
+    <h2>Listado de Boletos</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Usuario</th>
+                <th>ID Juego</th>
+                <th>Números</th>
+                <th>Costo</th>
+                <th>Creado Por</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let boleto of BOLETOS">
+                <td>{{ boleto.id }}</td>
+                <td>{{ boleto.usuario_id }}</td>
+                <td>{{ boleto.juego_id }}</td>
+                <td>{{ boleto.numeros || '—' }}</td>
+                <td>{{ boleto.costo | currency:'COP' }}</td>
+                <td>{{ boleto.creado_por || 'No especificado' }}</td>
+                <td>
+                    <button (click)="verDetalles(boleto)">Ver detalles</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
