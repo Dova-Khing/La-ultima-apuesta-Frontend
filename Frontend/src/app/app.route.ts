@@ -39,7 +39,7 @@ export const routes: Routes = [
     {
         path: 'historial-saldo',
         loadComponent: () =>
-            import('./features/historial-saldo/historial-saldo-list/historial-saldo-list.component').then(m => m.HistorialSaldoListComponent)
+            import('./features/historial-saldo-list/historial-saldo-list.component').then(m => m.HistorialSaldoListComponent)
     },
     {
         path: 'auth',

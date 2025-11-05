@@ -20,11 +20,12 @@ declare interface RouteInfo {
  */
 export const ROUTES: RouteInfo[] = [
     { path: '/dashboard', title: 'Dashboard', icon: 'design_app', class: '' },
-    { path: '/categorias', title: 'Categorías', icon: 'shopping_basket', class: '' },
-    { path: '/usuarios', title: 'Usuarios', icon: 'users_single-02', class: '' },
-    { path: '/productos', title: 'Productos', icon: 'shopping_box', class: '' },
-    { path: '/notifications', title: 'Notificaciones', icon: 'ui-1_bell-53', class: '' },
-    { path: '/upgrade', title: 'Configuración', icon: 'objects_spaceship', class: 'active active-pro' }
+    { path: '/usuarios', title: 'Usuarios', icon: 'shopping_basket', class: '' },
+    { path: '/juegos', title: 'Juegos', icon: 'users_single-02', class: '' },
+    { path: '/partidas', title: 'Partidas', icon: 'shopping_box', class: '' },
+    { path: '/premios', title: 'Premios', icon: 'ui-1_bell-53', class: '' },
+    { path: '/boletos', title: 'Boletos', icon: 'objects_spaceship', class: '' },
+    { path: '/historial-saldo', title: 'Historial', icon: 'objects_spaceship', class: '' }
 ];
 
 @Component({
