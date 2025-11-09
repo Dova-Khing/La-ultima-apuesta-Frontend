@@ -1,0 +1,165 @@
+/* Estilos generales del componente */
+:host {
+    display: block;
+    padding: 20px;
+}
+
+h2 {
+    color: #FFC107;
+    /* Ámbar/Amarillo para Historial Saldo */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #FFC107;
+    padding-bottom: 5px;
+}
+
+button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    color: white;
+
+    &.primary {
+        background-color: #FFC107;
+        color: #333;
+        /* Texto oscuro para el botón Ámbar */
+        font-weight: bold;
+    }
+
+    &.delete-btn {
+        background-color: #f44336;
+        /* Rojo para eliminar */
+    }
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+/* --- Estilos de la Tabla --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    th,
+    td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #fff8e1;
+        /* Fondo muy claro para la cabecera */
+        font-weight: bold;
+        color: #333;
+    }
+
+    tr:hover {
+        background-color: #fffde7;
+    }
+
+    /* Estilos condicionales para el tipo de movimiento */
+    .tipo-recarga,
+    .tipo-premio {
+        color: #4CAF50;
+        /* Verde para movimientos positivos */
+        font-weight: bold;
+    }
+
+    .tipo-apuesta {
+        color: #f44336;
+        /* Rojo para movimientos de débito/apuesta */
+        font-weight: bold;
+    }
+}
+
+
+/* --- Estilos del Modal --- */
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    animation: fadeIn 0.3s;
+
+    h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #FFC107;
+    }
+}
+
+/* Estilos del formulario dentro del modal */
+form {
+    display: grid;
+    gap: 15px;
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+}
+
+.modal-actions {
+    margin-top: 20px;
+    text-align: right;
+
+    .cancel-btn {
+        background-color: #9e9e9e;
+        /* Gris para cancelar */
+        color: white;
+    }
+}
+
+/* Animación simple */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

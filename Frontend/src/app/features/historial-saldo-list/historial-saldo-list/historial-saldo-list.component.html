@@ -1,0 +1,72 @@
+<div class="container">
+    <h2>Historial de Saldo</h2>
+
+    <button (click)="crearMovimiento()" class="primary">Registrar Movimiento</button>
+
+    <hr>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Usuario</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let mov of historiales">
+                <td>{{ mov.id | slice:0:8 }}...</td>
+                <td>{{ mov.usuario_id | slice:0:8 }}...</td>
+
+                <td [ngClass]="{
+                    'tipo-recarga': mov.tipo === 'recarga',
+                    'tipo-apuesta': mov.tipo === 'apuesta',
+                    'tipo-premio': mov.tipo === 'premio'
+                }">
+                    {{ mov.tipo | uppercase }}
+                </td>
+
+                <td>{{ mov.monto | currency:'COP':'symbol':'1.2-2' }}</td>
+                <td>{{ mov.fecha | date:'short' }}</td>
+
+                <td>
+                    <button (click)="verDetalles(mov)">Ver detalles</button>
+                    <button (click)="delete(mov.id!)" class="delete-btn">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Modal -->
+<div *ngIf="showModal" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>Registrar Nuevo Movimiento</h3>
+
+        <form (ngSubmit)="save()">
+
+            <label for="usuarioId">Usuario ID (UUID):</label>
+            <input id="usuarioId" type="text" [(ngModel)]="editingItem.usuario_id" name="usuario_id" required>
+
+            <label for="tipo">Tipo de Movimiento:</label>
+            <select id="tipo" [(ngModel)]="editingItem.tipo" name="tipo" required>
+                <option value="recarga">Recarga</option>
+                <option value="apuesta">Apuesta</option>
+                <option value="premio">Premio</option>
+            </select>
+
+            <label for="monto">Monto:</label>
+            <input id="monto" type="number" [(ngModel)]="editingItem.monto" name="monto" required min="0.01">
+
+            <div class="modal-actions">
+                <button type="submit" class="primary">Registrar Movimiento</button>
+                <button type="button" (click)="closeModal()" class="cancel-btn">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
