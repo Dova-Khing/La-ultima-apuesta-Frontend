@@ -1,30 +1,63 @@
-<div class="container">
-    <h2>Listado de Boletos</h2>
+<div class="boleto-container">
+    <h2>Gestión de Boletos</h2>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>ID Usuario</th>
-                <th>ID Juego</th>
-                <th>Números</th>
-                <th>Costo</th>
-                <th>Creado Por</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let boleto of BOLETOS">
-                <td>{{ boleto.id }}</td>
-                <td>{{ boleto.usuario_id }}</td>
-                <td>{{ boleto.juego_id }}</td>
-                <td>{{ boleto.numeros || '—' }}</td>
-                <td>{{ boleto.costo | currency:'COP' }}</td>
-                <td>{{ boleto.creado_por || 'No especificado' }}</td>
-                <td>
-                    <button (click)="verDetalles(boleto)">Ver detalles</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="boleto-form">
+        <h3>{{ editingBoleto.id ? 'Editar Boleto' : 'Crear Nuevo Boleto' }}</h3>
+
+        <form (ngSubmit)="saveBoleto()">
+
+            <label for="usuario_id">Usuario:</label>
+            <select id="usuario_id" [(ngModel)]="editingBoleto.usuario_id" name="usuario_id" required>
+                <option [ngValue]="null" disabled selected>Selecciona un usuario</option>
+                <option *ngFor="let usuario of usuarios" [ngValue]="usuario.id">
+                    {{ usuario.nombre }} ({{ usuario.id }})
+                </option>
+            </select>
+
+            <label for="juego_id">Juego:</label>
+            <select id="juego_id" [(ngModel)]="editingBoleto.juego_id" name="juego_id" required>
+                <option [ngValue]="null" disabled selected>Selecciona un juego</option>
+                <option *ngFor="let juego of juegos" [ngValue]="juego.id">
+                    {{ juego.nombre }}
+                </option>
+            </select>
+
+            <label for="numeros">Números:</label>
+            <input type="text" id="numeros" [(ngModel)]="editingBoleto.numeros" name="numeros" required />
+
+            <label for="costo">Costo:</label>
+            <input type="number" id="costo" [(ngModel)]="editingBoleto.costo" name="costo" required />
+
+            <button type="submit">
+                {{ editingBoleto.id ? 'Guardar Cambios' : 'Crear Boleto' }}
+            </button>
+
+            <button type="button" (click)="cancelEdit()" *ngIf="isEditing">
+                Cancelar
+            </button>
+        </form>
+    </div>
+
+
+    <div class="boleto-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Números</th>
+                    <th>Costo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let boleto of boletos">
+                    <td>{{ boleto.numeros }}</td>
+                    <td>{{ boleto.costo | currency:'USD' }}</td>
+                    <td>
+                        <button (click)="editBoleto(boleto)">Editar</button>
+                        <button (click)="deleteBoleto(boleto.id)">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

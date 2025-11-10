@@ -1,87 +1,121 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-// Interface para definir la estructura de un premio
-export interface Premio {
-    id?: number;
-    juego_id: number;
-    descripcion: string;
-    valor: number;
-    creado_por?: string;
-}
-
-// Array con datos de ejemplo de premios
-export const PREMIOS: Premio[] = [
-    {
-        id: 1,
-        juego_id: 101,
-        descripcion: 'Premio mayor del sorteo semanal',
-        valor: 5000000,
-        creado_por: 'admin'
-    },
-    {
-        id: 2,
-        juego_id: 102,
-        descripcion: 'Segundo lugar torneo relámpago',
-        valor: 2000000,
-        creado_por: 'admin'
-    },
-    {
-        id: 3,
-        juego_id: 103,
-        descripcion: 'Premio especial de fidelidad',
-        valor: 1000000,
-        creado_por: 'sistema'
-    },
-    {
-        id: 4,
-        juego_id: 104,
-        descripcion: 'Bonificación por participación',
-        valor: 500000,
-        creado_por: 'soporte'
-    },
-    {
-        id: 5,
-        juego_id: 105,
-        descripcion: 'Premio sorpresa mensual',
-        valor: 1500000,
-        creado_por: 'admin'
-    }
-];
+import { FormsModule } from '@angular/forms';
+import { PaginationParams } from '../../../core/models/api-response.model';
+import { PremioService } from '../../../core/services/premio.service';
+import { Premio, PremioFilters } from '../../../shared/models/premio.model';
 
 @Component({
     selector: 'app-premio-list',
     standalone: true,
-    imports: [CommonModule, RouterModule],
     templateUrl: './premio-list.component.html',
-    styleUrls: ['./premio-list.component.scss']
+    imports: [CommonModule, FormsModule]
 })
 export class PremioListComponent implements OnInit {
-    // Propiedad que contiene los premios
-    premios: Premio[] = PREMIOS;
 
-    constructor() { }
+    premios: Premio[] = [];
+    pagination: PaginationParams = { page: 1, limit: 10 };
+    filters: PremioFilters = {};
 
-    ngOnInit() {
-        // Lógica de inicialización si se requiere
+    showModal = false;
+
+    editingPremio: Premio = {
+        id: undefined,
+        juego_id: '',
+        descripcion: '',
+        valor: 0
+    };
+
+    constructor(private premioService: PremioService) { }
+
+    ngOnInit(): void {
+        this.loadPremios();
     }
 
-    crearPremio() {
-        console.log('Crear nuevo premio');
-        alert('Función de crear premio - Por implementar');
+    loadPremios(): void {
+        this.premioService.getPremios(this.pagination, this.filters)
+            .subscribe((resp) => {
+                this.premios = resp; // ← ya es un array
+            });
     }
 
-    editarPremio(premio: Premio) {
-        console.log('Editar premio:', premio);
-        alert(`Editando premio: ${premio.descripcion}`);
+    openModal(premio?: Premio): void {
+        this.editingPremio = premio
+            ? { ...premio }
+            : { id: undefined, juego_id: '', descripcion: '', valor: 0 };
+
+        this.showModal = true;
     }
 
-    eliminarPremio(premio: Premio) {
-        console.log('Eliminar premio:', premio);
-        if (confirm(`¿Estás seguro de eliminar "${premio.descripcion}"?`)) {
-            this.premios = this.premios.filter(p => p.id !== premio.id);
-            alert(`Premio "${premio.descripcion}" eliminado`);
+    savePremio(): void {
+
+        const premioToSave: any = { ...this.editingPremio }; // Usar 'any' para permitir la eliminación de propiedades
+
+        if (premioToSave.juego_id) {
+
+            premioToSave.juego_id = premioToSave.juego_id.trim();
+        }
+
+        if (premioToSave.id) {
+            // --- INICIO DE CORRECCIÓN ---
+
+            // 1. Extraer el ID para la URL
+            const premioId = premioToSave.id;
+
+            // 2. Eliminar el ID del cuerpo de la petición (FastAPI no lo espera)
+            delete premioToSave.id;
+
+            this.premioService.updatePremio(premioId, premioToSave)
+                .subscribe({
+                    next: () => {
+                        this.loadPremios();
+                        this.showModal = false;
+                    },
+                    error: (err) => {
+                        console.error("Error al actualizar premio:", err);
+                        // Puedes añadir lógica para mostrar un mensaje de error al usuario
+                    }
+                });
+            // --- FIN DE CORRECCIÓN ---
+
+        } else {
+            // Crear
+            this.premioService.createPremio(premioToSave) // Usar el objeto limpio
+                .subscribe(() => {
+                    this.loadPremios();
+                    this.showModal = false;
+                });
         }
     }
+
+    deletePremio(id: string): void {
+        this.premioService.deletePremio(id)
+            .subscribe(() => this.loadPremios());
+    }
+
+
+    closeModal(): void {
+        this.showModal = false;
+
+        // Si quieres limpiar el formulario cada vez:
+        this.editingPremio = {
+            id: undefined,
+            juego_id: '',
+            descripcion: '',
+            valor: 0
+        };
+    }
+    crearPremio(): void {
+        this.openModal();
+    }
+
+    editarPremio(premio: Premio): void {
+        this.openModal(premio);
+    }
+
+    eliminarPremio(premio: Premio): void {
+        if (!premio.id) return;
+        this.deletePremio(premio.id);
+    }
+
 }

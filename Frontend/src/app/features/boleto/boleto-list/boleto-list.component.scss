@@ -1,33 +1,27 @@
-.container {
+@use 'src/styles' as *;
+
+
+.boleto-container {
+    max-width: 800px;
+    margin: 0 auto;
     padding: 1rem;
 }
 
-table {
+.boleto-form {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+}
+
+.boleto-table table {
     width: 100%;
     border-collapse: collapse;
 }
 
-th,
-td {
-    padding: 0.75rem;
-    border-bottom: 1px solid #ccc;
+.boleto-table th,
+.boleto-table td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
     text-align: left;
-}
-
-button {
-    background-color: #007bff;
-    border: none;
-    color: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-h2 {
-    margin-bottom: 1rem;
-    color: #2c3e50;
 }

@@ -1,41 +1,159 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
-// Interface que define la estructura de un boleto
-export interface Boleto {
-    id?: number;
-    usuario_id: number;
-    juego_id: number;
-    numeros?: string;
-    costo: number;
-    creado_por?: string;
-}
+import { Boleto, BoletoCreate, BoletoUpdate } from '../../../shared/models/boleto.model';
+import { BoletoService } from 'src/app/core/services/boleto.service';
+import { Usuario } from 'src/app/shared/models/usuario.model';
+import { Juego } from 'src/app/shared/models/juego.model';
+import { UsuarioService } from 'src/app/core/services/usuario.service';
+import { JuegoService } from 'src/app/core/services/juego.service';
 
 @Component({
     selector: 'app-boleto-list',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, FormsModule, CurrencyPipe],
     templateUrl: './boleto-list.component.html',
     styleUrls: ['./boleto-list.component.scss']
 })
 export class BoletoListComponent implements OnInit {
 
-    // Array con boletos de ejemplo
-    BOLETOS: Boleto[] = [
-        { id: 1, usuario_id: 1, juego_id: 3, numeros: '05, 12, 23, 34, 45', costo: 10000, creado_por: 'admin' },
-        { id: 2, usuario_id: 2, juego_id: 1, numeros: '07, 18, 29, 33, 42', costo: 8000, creado_por: 'system' },
-        { id: 3, usuario_id: 1, juego_id: 2, numeros: '03, 09, 15, 22, 36', costo: 12000 },
-        { id: 4, usuario_id: 3, juego_id: 4, numeros: '11, 16, 21, 32, 40', costo: 15000, creado_por: 'admin' }
-    ];
+    boletos: Boleto[] = [];
+    usuarios: Usuario[] = [];
+    juegos: Juego[] = [];
 
-    constructor() { }
+    showModal = false;
+    isEditing = false;
+
+    editingBoleto: Partial<Boleto> = {
+        usuario_id: '',
+        juego_id: '',
+        numeros: '',
+        costo: 0
+    };
+
+    constructor(
+        private boletoService: BoletoService,
+        private usuarioService: UsuarioService,
+        private juegoService: JuegoService
+    ) { }
 
     ngOnInit(): void {
-        console.log('Boletos cargados correctamente');
+        this.loadBoletos();
+        this.loadUsuarios();
+        this.loadJuegos();
     }
 
-    verDetalles(boleto: Boleto): void {
-        alert(`Boleto del usuario ${boleto.usuario_id} para el juego ${boleto.juego_id}\nCosto: $${boleto.costo}`);
+    loadBoletos(): void {
+        this.boletoService.getBoletos().subscribe({
+            next: (data: Boleto[]) => {
+                console.log('Boletos recibidos:', data);
+                this.boletos = data;
+            },
+            error: (err) => console.error('Error al cargar boletos:', err)
+        });
     }
+
+    loadUsuarios(): void {
+        const pagination = { page: 1, limit: 100 };
+        this.usuarioService.getUsuarios(pagination).subscribe({
+            next: (data) => this.usuarios = data,
+            error: (err) => console.error('Error al cargar usuarios:', err)
+        });
+    }
+
+    loadJuegos(): void {
+        this.juegoService.getJuegos({ page: 1, limit: 100 }).subscribe({
+            next: (data) => this.juegos = data,
+            error: (err) => console.error('Error al cargar juegos:', err)
+        });
+    }
+
+    openModal(boleto?: Boleto): void {
+        this.editingBoleto = boleto
+            ? { ...boleto }
+            : { usuario_id: '', juego_id: '', numeros: '', costo: 0 };
+
+        if (!boleto) {
+            this.editingBoleto.creado_por = 'UsuarioLogueado123';
+        }
+
+        this.isEditing = !!boleto;
+        this.showModal = true;
+    }
+
+    saveBoleto(): void {
+        if (!this.editingBoleto.usuario_id || !this.editingBoleto.juego_id ||
+            !this.editingBoleto.numeros || this.editingBoleto.costo === undefined) {
+            console.error('Faltan datos obligatorios para guardar el boleto.');
+            return;
+        }
+
+        if (this.editingBoleto.id) {
+            const updateData: BoletoUpdate = {
+                numeros: this.editingBoleto.numeros!,
+                costo: this.editingBoleto.costo!,
+                actualizado_por: 'UsuarioEditor123'
+            };
+
+            this.boletoService.updateBoleto(this.editingBoleto.id, updateData).subscribe({
+                next: () => {
+                    this.loadBoletos();
+                    this.closeModal();
+                },
+                error: (err) => console.error('Error al actualizar boleto:', err)
+            });
+
+        } else {
+            const createData: BoletoCreate = {
+                usuario_id: this.editingBoleto.usuario_id!,
+                juego_id: this.editingBoleto.juego_id!,
+                numeros: this.editingBoleto.numeros!,
+                costo: this.editingBoleto.costo!,
+                creado_por: this.editingBoleto.creado_por || 'Sistema'
+            };
+
+            this.boletoService.createBoleto(createData).subscribe({
+                next: () => {
+                    this.loadBoletos();
+                    this.closeModal();
+                },
+                error: (err) => console.error('Error al crear boleto:', err)
+            });
+        }
+    }
+
+    deleteBoleto(boleto: Boleto | string): void {
+        const id = typeof boleto === 'string' ? boleto : boleto.id;
+        if (!id) return;
+
+        if (confirm('¿Seguro que deseas eliminar este boleto?')) {
+            this.boletoService.deleteBoleto(id).subscribe({
+                next: () => this.loadBoletos(),
+                error: (err) => console.error('Error al eliminar boleto:', err)
+            });
+        }
+    }
+
+    closeModal(): void {
+        this.showModal = false;
+        this.isEditing = false;
+
+        this.editingBoleto = {
+            usuario_id: '',
+            juego_id: '',
+            numeros: '',
+            costo: 0
+        };
+    }
+
+    cancelEdit(): void {
+        this.closeModal();
+    }
+
+    editBoleto(boleto: Boleto): void {
+        this.openModal(boleto);
+        this.isEditing = true;
+    }
+
 }

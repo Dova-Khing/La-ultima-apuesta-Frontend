@@ -1,52 +1,116 @@
+// src/app/components/partida-list/partida-list.component.ts
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-// Interface que define la estructura de una partida
-export interface Partida {
-    id?: number;
-    usuario_id: number;
-    juego_id: number;
-    costo_apuesta: number;
-    estado: string;
-    premio_id?: number;
-}
+import { FormsModule } from '@angular/forms';
+import { PartidaService } from '../../../core/services/partida.service';
+import { Partida, PartidaFilters } from '../../../shared/models/partida.model';
+import { PaginationParams } from '../../../core/models/api-response.model';
 
 @Component({
     selector: 'app-partida-list',
     standalone: true,
-    imports: [CommonModule, RouterModule],
     templateUrl: './partida-list.component.html',
-    styleUrls: ['./partida-list.component.scss']
+    imports: [CommonModule, FormsModule]
 })
 export class PartidaListComponent implements OnInit {
 
-    // Datos de ejemplo de partidas
-    partidas: Partida[] = [
-        { id: 1, usuario_id: 1, juego_id: 101, costo_apuesta: 5000, estado: 'Ganada', premio_id: 1 },
-        { id: 2, usuario_id: 2, juego_id: 102, costo_apuesta: 3000, estado: 'Perdida' },
-        { id: 3, usuario_id: 3, juego_id: 103, costo_apuesta: 10000, estado: 'En curso' },
-        { id: 4, usuario_id: 4, juego_id: 104, costo_apuesta: 7000, estado: 'Ganada', premio_id: 2 },
-        { id: 5, usuario_id: 5, juego_id: 105, costo_apuesta: 2000, estado: 'Cancelada' }
-    ];
+    partidas: Partida[] = [];
+    pagination: PaginationParams = { page: 1, limit: 10 };
+    filters: PartidaFilters = {};
 
-    constructor() { }
+    showModal = false;
 
-    ngOnInit() {
-        console.log('Componente PartidaList inicializado');
+    // Inicializa el objeto para la edición/creación
+    editingPartida: Partida = {
+        id: undefined,
+        usuario_id: '',
+        juego_id: '',
+        costo_apuesta: 0,
+        estado: 'INICIO', // Estado inicial
+        premio_id: undefined,
+        fecha: ''
+    } as Partida;
+
+    constructor(private partidaService: PartidaService) { }
+
+    ngOnInit(): void {
+        this.loadPartidas();
     }
 
-    crearPartida() {
-        alert('Función de crear partida - por implementar');
+    loadPartidas(): void {
+        this.partidaService.getPartidas(this.pagination, this.filters)
+            .subscribe((resp) => {
+                this.partidas = resp;
+            });
     }
 
-    editarPartida(partida: Partida) {
-        alert(`Editando partida con ID: ${partida.id}`);
+    openModal(partida?: Partida): void {
+        this.editingPartida = partida
+            ? { ...partida }
+            : {
+                id: undefined,
+                usuario_id: '',
+                juego_id: '',
+                costo_apuesta: 0,
+                estado: 'INICIO',
+                premio_id: undefined,
+                fecha: ''
+            } as Partida;
+
+        this.showModal = true;
     }
 
-    eliminarPartida(partida: Partida) {
-        if (confirm(`¿Eliminar partida con ID ${partida.id}?`)) {
-            alert(`Partida eliminada`);
+    savePartida(): void {
+        const partidaToSave: Partial<Partida> = { ...this.editingPartida };
+
+        //Limpiar todos los UUIDs de espacios/tabs para evitar el Error 422
+        if (partidaToSave.usuario_id) {
+            partidaToSave.usuario_id = partidaToSave.usuario_id.trim();
+        }
+        if (partidaToSave.juego_id) {
+            partidaToSave.juego_id = partidaToSave.juego_id.trim();
+        }
+        if (partidaToSave.premio_id) {
+            // Solo aplicar trim si no es undefined
+            partidaToSave.premio_id = partidaToSave.premio_id.trim() || undefined;
+        }
+
+        if (partidaToSave.id) {
+            // Actualizar
+            this.partidaService.updatePartida(partidaToSave.id, partidaToSave)
+                .subscribe(() => {
+                    this.loadPartidas();
+                    this.closeModal();
+                });
+        } else {
+            // Crear
+            this.partidaService.createPartida(partidaToSave)
+                .subscribe(() => {
+                    this.loadPartidas();
+                    this.closeModal();
+                });
         }
     }
+
+    deletePartida(id: string): void {
+        this.partidaService.deletePartida(id)
+            .subscribe(() => this.loadPartidas());
+    }
+
+    // Métodos auxiliares para la interfaz
+    closeModal(): void {
+        this.showModal = false;
+    }
+    crearPartida(): void {
+        this.openModal();
+    }
+    editarPartida(partida: Partida): void {
+        this.openModal(partida);
+    }
+    eliminarPartida(partida: Partida): void {
+        if (!partida.id) return;
+        this.deletePartida(partida.id);
+    }
+
 }

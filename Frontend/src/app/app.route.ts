@@ -1,3 +1,4 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -13,8 +14,8 @@ export const routes: Routes = [
     },
     {
         path: 'usuarios',
-        loadComponent: () =>
-            import('./features/usuario/usuario-list/usuario-list.component').then(m => m.UsuarioListComponent)
+        loadChildren: () =>
+            import('./features/usuario/usuario.routes').then(m => m.usuarioRoutes)
     },
     {
         path: 'premios',
@@ -28,8 +29,8 @@ export const routes: Routes = [
     },
     {
         path: 'juegos',
-        loadComponent: () =>
-            import('./features/juego/juego-list/juego-list.component').then(m => m.JuegoListComponent)
+        loadChildren: () =>
+            import('./features/juego/juego.routes').then(m => m.juegoRoutes)
     },
     {
         path: 'boletos',
@@ -39,7 +40,7 @@ export const routes: Routes = [
     {
         path: 'historial-saldo',
         loadComponent: () =>
-            import('./features/historial-saldo-list/historial-saldo-list.component').then(m => m.HistorialSaldoListComponent)
+            import('./features/historial-saldo-list/historial-saldo-list/historial-saldo-list.component').then(m => m.HistorialSaldoListComponent)
     },
     {
         path: 'auth',
