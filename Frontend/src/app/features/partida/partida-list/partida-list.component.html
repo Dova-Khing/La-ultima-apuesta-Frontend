@@ -1,0 +1,74 @@
+<h2>Gestión de Partidas</h2>
+
+<button (click)="crearPartida()">Crear Nueva Partida</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario ID</th>
+            <th>Juego ID</th>
+            <th>Costo Apuesta</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let partida of partidas">
+            <td>{{ partida.id | slice:0:8 }}...</td>
+            <td>{{ partida.usuario_id | slice:0:8 }}...</td>
+            <td>{{ partida.juego_id | slice:0:8 }}...</td>
+            <td>{{ partida.costo_apuesta }}</td>
+            <td>{{ partida.estado }}</td>
+            <td>{{ partida.fecha | date:'short' }}</td>
+            <td>
+                <button (click)="editarPartida(partida)">Editar</button>
+                <button (click)="eliminarPartida(partida)">Eliminar</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div *ngIf="showModal" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>{{ editingPartida.id ? 'Editar Partida' : 'Crear Nueva Partida' }}</h3>
+        <form (ngSubmit)="savePartida()">
+
+            <div class="form-grid">
+                <div>
+                    <label for="usuarioId">Usuario ID (UUID):</label>
+                    <input id="usuarioId" [(ngModel)]="editingPartida.usuario_id" name="usuario_id" required>
+                </div>
+                <div>
+                    <label for="juegoId">Juego ID (UUID):</label>
+                    <input id="juegoId" [(ngModel)]="editingPartida.juego_id" name="juego_id" required>
+                </div>
+                <div>
+                    <label for="costoApuesta">Costo Apuesta:</label>
+                    <input id="costoApuesta" type="number" [(ngModel)]="editingPartida.costo_apuesta"
+                        name="costo_apuesta" required>
+                </div>
+                <div>
+                    <label for="estado">Estado:</label>
+                    <select id="estado" [(ngModel)]="editingPartida.estado" name="estado" required>
+                        <option value="INICIO">Inicio</option>
+                        <option value="EN_CURSO">En Curso</option>
+                        <option value="FINALIZADA">Finalizada</option>
+                        <option value="CANCELADA">Cancelada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group-full">
+                <label for="premioId">Premio ID (Opcional UUID):</label>
+                <input id="premioId" [(ngModel)]="editingPartida.premio_id" name="premio_id">
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit">{{ editingPartida.id ? 'Guardar Cambios' : 'Crear Partida' }}</button>
+                <button type="button" (click)="closeModal()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>

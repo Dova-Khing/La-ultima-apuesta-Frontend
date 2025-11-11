@@ -1,0 +1,97 @@
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Gestión de Premios</h2>
+
+    <div class="text-end mb-3">
+        <button class="btn btn-success" (click)="crearPremio()">
+            Crear Premio
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>ID</th>
+                    <th>ID del Juego</th>
+                    <th>Descripción</th>
+                    <th>Valor</th>
+                    <th>Creado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let premio of premios">
+                    <td class="text-center">{{ premio.id }}</td>
+                    <td class="text-center">{{ premio.juego_id }}</td>
+                    <td>{{ premio.descripcion }}</td>
+                    <td class="text-end">{{ premio.valor | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                    <td class="text-center">{{ premio.creado_por || '—' }}</td>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-sm me-2" (click)="editarPremio(premio)">
+                            Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm" (click)="eliminarPremio(premio)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="premios.length === 0">
+                    <td colspan="6" class="text-center text-muted py-3">
+                        No hay premios registrados.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ================= MODAL ================= -->
+<div class="modal fade show d-block" tabindex="-1" *ngIf="showModal" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ editingPremio.id ? 'Editar Premio' : 'Crear Premio' }}
+                </h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+
+
+                    <div class="mb-3">
+                        <label class="form-label">ID Juego</label>
+                        <input type="text" [(ngModel)]="editingPremio.juego_id" name="juego_id" class="form-control"
+                            placeholder="UUID del juego" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <input type="text" [(ngModel)]="editingPremio.descripcion" name="descripcion"
+                            class="form-control" placeholder="Descripción del premio" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valor</label>
+                        <input type="number" [(ngModel)]="editingPremio.valor" name="valor" class="form-control" min="0"
+                            required>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="closeModal()">
+                    Cancelar
+                </button>
+                <button class="btn btn-primary" (click)="savePremio()">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
