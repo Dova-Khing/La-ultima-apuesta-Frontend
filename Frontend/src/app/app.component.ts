@@ -69,5 +69,5 @@ import { SidebarComponent } from './shared/components/sidebar/sidebar.component'
   `]
 })
 export class AppComponent {
-  title = 'frontend-angular-clean-architecture';
+  title = 'frontend-casino';
 }
