@@ -1,3 +1,4 @@
+
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +10,13 @@ import { Juego } from 'src/app/shared/models/juego.model';
 import { UsuarioService } from 'src/app/core/services/usuario.service';
 import { JuegoService } from 'src/app/core/services/juego.service';
 
+/**
+ * Administra la visualización, creación, edición y eliminación de boletos.
+ * Carga datos iniciales de usuarios y juegos, controla el modal y gestiona
+ * la interacción con los servicios relacionados.
+ */
+
+
 @Component({
     selector: 'app-boleto-list',
     standalone: true,
@@ -17,6 +25,13 @@ import { JuegoService } from 'src/app/core/services/juego.service';
     styleUrls: ['./boleto-list.component.scss']
 })
 export class BoletoListComponent implements OnInit {
+    /**
+   * Lista de boletos recuperada desde el backend.
+   * Lista de usuarios disponibles para asociar a un boleto
+   * Lista de juegos disponibles para asociar a un boleto.
+   *  Indica si el modal se encuentra en modo edición.
+   * Estado interno temporal para crear o editar un boleto.
+   */
 
     boletos: Boleto[] = [];
     usuarios: Usuario[] = [];
@@ -37,12 +52,20 @@ export class BoletoListComponent implements OnInit {
         private usuarioService: UsuarioService,
         private juegoService: JuegoService
     ) { }
+    /**
+     * Inicializa el componente cargando boletos, usuarios y juegos.
+     */
 
     ngOnInit(): void {
         this.loadBoletos();
         this.loadUsuarios();
         this.loadJuegos();
     }
+
+    /**
+    * Recupera la lista de boletos desde el servicio.
+    * Actualiza la propiedad `boletos`.
+    */
 
     loadBoletos(): void {
         this.boletoService.getBoletos().subscribe({
@@ -54,6 +77,9 @@ export class BoletoListComponent implements OnInit {
         });
     }
 
+    /**
+    * Recupera usuarios paginados para el selector del formulario.
+    */
     loadUsuarios(): void {
         const pagination = { page: 1, limit: 100 };
         this.usuarioService.getUsuarios(pagination).subscribe({
@@ -61,6 +87,9 @@ export class BoletoListComponent implements OnInit {
             error: (err) => console.error('Error al cargar usuarios:', err)
         });
     }
+    /**
+     * Recupera la lista de juegos disponibles para el formulario.
+     */
 
     loadJuegos(): void {
         this.juegoService.getJuegos({ page: 1, limit: 100 }).subscribe({
@@ -68,6 +97,10 @@ export class BoletoListComponent implements OnInit {
             error: (err) => console.error('Error al cargar juegos:', err)
         });
     }
+    /**
+     * Abre el modal de creación o edición.
+     * @param boleto Boleto existente a editar (opcional).
+     */
 
     openModal(boleto?: Boleto): void {
         this.editingBoleto = boleto
@@ -81,6 +114,10 @@ export class BoletoListComponent implements OnInit {
         this.isEditing = !!boleto;
         this.showModal = true;
     }
+    /**
+     * Ejecuta creación o actualización de un boleto según el estado actual.
+     * Valida datos antes de enviar al servicio correspondiente.
+     */
 
     saveBoleto(): void {
         if (!this.editingBoleto.usuario_id || !this.editingBoleto.juego_id ||
@@ -123,6 +160,11 @@ export class BoletoListComponent implements OnInit {
         }
     }
 
+    /**
+     * Elimina un boleto utilizando su ID luego de confirmar la acción.
+     * @param boleto Objeto boleto o ID del boleto.
+     */
+
     deleteBoleto(boleto: Boleto | string): void {
         const id = typeof boleto === 'string' ? boleto : boleto.id;
         if (!id) return;
@@ -134,6 +176,10 @@ export class BoletoListComponent implements OnInit {
             });
         }
     }
+
+    /**
+    * Cierra el modal y limpia los datos del formulario.
+    */
 
     closeModal(): void {
         this.showModal = false;
@@ -147,9 +193,18 @@ export class BoletoListComponent implements OnInit {
         };
     }
 
+    /**
+     * Cancela la edición actual.
+     */
+
     cancelEdit(): void {
         this.closeModal();
     }
+
+    /**
+     * Abre el modal en modo edición con los datos del boleto seleccionado.
+     * @param boleto Instancia de boleto a editar.
+     */
 
     editBoleto(boleto: Boleto): void {
         this.openModal(boleto);

@@ -5,10 +5,10 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
-    standalone: true,
-    selector: 'app-login',
-    imports: [CommonModule],
-    template: `
+  standalone: true,
+  selector: 'app-login',
+  imports: [CommonModule],
+  template: `
     <div class="login-page">
       <h2>Iniciar Sesión</h2>
       <p>Formulario de login aquí</p>
@@ -25,20 +25,20 @@ import { Router } from '@angular/router';
       </form>
     </div>
   `,
-    styles: [`
+  styles: [`
     .login-page {
       padding: 2rem;
       text-align: center;
     }
   `]
 })
-export class LoginComponent { 
+export class LoginComponent {
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {}
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) { }
   form: any;
 
-  ngOnInit(): void { 
-      this.form = this.fb.group({
+  ngOnInit(): void {
+    this.form = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(10)]],
       email: ['', [Validators.required, Validators.email]],
     });

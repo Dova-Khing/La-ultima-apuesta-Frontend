@@ -14,6 +14,5 @@ export class AuthService {
   login(credentials: { username: string; email: string }): Observable<{ accessToken: string; refreshToken: string }> {
     return this.http.post<{ accessToken: string; refreshToken: string }>(`${this.baseUrl}/auth/login`, credentials);
   }
-    storeTokens(tokens: { accessToken: string; refreshToken: string }): void {}
+  storeTokens(tokens: { accessToken: string; refreshToken: string }): void { }
 }
-
