@@ -33,13 +33,17 @@ export class AuthService {
     );
   }
 
-  storeTokens(tokens: { accessToken: string; refreshToken: string }): void {
-    localStorage.setItem('accessToken', tokens.accessToken);
-    localStorage.setItem('refreshToken', tokens.refreshToken);
+
+  storeTokens(usuario: any): void {
+
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+
+
   }
 
   getToken(): string | null {
-    return localStorage.getItem('accessToken');
+
+    return localStorage.getItem('usuario');
   }
 
   isLoggedIn(): boolean {
@@ -47,7 +51,15 @@ export class AuthService {
   }
 
   logout(): void {
+    // Limpiar toda la información de autenticación
+    localStorage.removeItem('usuario');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+  }
+
+  // Método adicional para obtener el usuario actual
+  getCurrentUser(): any {
+    const usuario = localStorage.getItem('usuario');
+    return usuario ? JSON.parse(usuario) : null;
   }
 }
