@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="login-page">
-      <h2>Iniciar Sesión</h2>
+
+      <h2 class="titulo-login">Iniciar Sesión</h2>
 
       <!-- Mostrar mensaje si ya está logueado -->
       <div *ngIf="isLoggedIn" class="logged-in-message">
@@ -72,6 +73,14 @@ import { Router } from '@angular/router';
       color: #1e2a38;
       font-weight: 600;
       text-align: center;
+    }
+
+    
+    .titulo-login {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 25px;
     }
 
     label {

@@ -23,6 +23,7 @@ import { PaginationParams } from '../../../core/models/api-response.model';
     selector: 'app-partida-list',
     standalone: true,
     templateUrl: './partida-list.component.html',
+    styleUrls: ['./partida-list.component.scss'],
     imports: [CommonModule, FormsModule]
 })
 export class PartidaListComponent implements OnInit {
