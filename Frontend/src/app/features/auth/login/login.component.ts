@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 
       <!-- Mostrar mensaje si ya está logueado -->
       <div *ngIf="isLoggedIn" class="logged-in-message">
-        <p> Ya estás logueado en el sistema.</p>
+        <p>Ya estás logueado en el sistema.</p>
         <div class="button-group">
           <button (click)="goToDashboard()" class="btn-primary">Ir al Dashboard</button>
           <button (click)="logout()" class="btn-secondary">Cerrar Sesión</button>
@@ -40,6 +40,11 @@ import { Router } from '@angular/router';
         </div>
 
         <button type="submit" [disabled]="form.invalid">Ingresar</button>
+
+        <!-- Enlace para registro -->
+        <div class="register-link">
+          <p>¿No tienes cuenta? <a (click)="goToRegister()">Regístrate aquí</a></p>
+        </div>
       </form>
     </div>
   `,
@@ -157,6 +162,29 @@ import { Router } from '@angular/router';
       flex-direction: column;
       gap: 0.5rem;
     }
+
+    .register-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    .register-link p {
+      margin: 0;
+      color: #666;
+    }
+
+    .register-link a {
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
   `]
 })
 export class LoginComponent implements OnInit {
@@ -200,6 +228,10 @@ export class LoginComponent implements OnInit {
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  goToRegister(): void {
+    this.router.navigate(['/auth/registro']);
   }
 
   logout(): void {
