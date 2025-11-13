@@ -1,5 +1,4 @@
 /**
- * src/app/core/services/boleto.service.ts
  * Service para manejar las operaciones CRUD de la entidad Boleto.
  */
 

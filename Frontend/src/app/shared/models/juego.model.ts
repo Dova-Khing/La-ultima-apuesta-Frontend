@@ -1,4 +1,4 @@
-// src/app/shared/models/juego.model.ts
+
 
 export interface Juego {
     id?: string;                 // UUID generado por el backend
@@ -11,13 +11,13 @@ export interface Juego {
     fecha_actualizacion?: string;// Fecha ISO generada por el backend
 }
 
-// 🔍 Para filtros en listados
+
 export interface JuegoFilters {
     nombre?: string;
     creado_por?: string;
 }
 
-// 📄 Para paginación (si tu API la maneja)
+
 export interface JuegoListResponse {
     juegos: Juego[];  // Lista de juegos
     total: number;    // Total de registros

@@ -1,27 +1,119 @@
-@use 'src/styles' as *;
-
-
 .boleto-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  margin-left: 200px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.boleto-container h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2d2d2d;
+  margin-bottom: 1.5rem;
 }
 
 .boleto-form {
-    background-color: #f9f9f9;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    border-radius: 8px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border-left: 6px solid #667eea;
+  margin-bottom: 2rem;
+}
+
+.boleto-form h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #444;
+  font-weight: 600;
+}
+
+label {
+  font-weight: 500;
+  margin-top: 0.8rem;
+  display: block;
+  color: #333;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 0.3rem;
+  margin-bottom: 0.8rem;
+  transition: border 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #667eea;
+  outline: none;
+}
+
+button {
+  background: #667eea;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: #5661d8;
+  transform: translateY(-2px);
+}
+
+button:nth-child(2) {
+  background: #f5576c;
+}
+
+button:nth-child(2):hover {
+  background: #d94559;
+}
+
+.boleto-table {
+  background: white;
+  padding: 1rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 .boleto-table table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.boleto-table th,
+.boleto-table th {
+  background: #667eea;
+  color: white;
+  padding: 0.8rem;
+  font-weight: 600;
+  text-align: left;
+}
+
 .boleto-table td {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    text-align: left;
+  padding: 0.8rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.boleto-table tr:hover {
+  background: #eef1ff;
+}
+
+.boleto-table button {
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 991px) {
+  .boleto-container {
+    margin-left: 0;
+  }
 }
