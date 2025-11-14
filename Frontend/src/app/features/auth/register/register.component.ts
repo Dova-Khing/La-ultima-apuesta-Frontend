@@ -52,7 +52,7 @@ import { Router } from '@angular/router';
 
         <div>
           <label for="saldo_inicial">Saldo Inicial:</label>
-          <input type="number" id="saldo_inicial" formControlName="saldo_inicial" min="0" value="0" />
+          <input type="number" id="saldo_inicial" formControlName="saldo_inicial" min="0" step="0.01" />
           <div *ngIf="form.get('saldo_inicial')?.touched && form.get('saldo_inicial')?.invalid" class="error-text">
             El saldo inicial no puede ser negativo.
           </div>
@@ -74,7 +74,18 @@ import { Router } from '@angular/router';
           </div>
         </div>
 
-        <button type="submit" [disabled]="form.invalid">Registrarse</button>
+        <button type="submit" [disabled]="form.invalid || isLoading">
+          {{ isLoading ? 'Registrando...' : 'Registrarse' }}
+        </button>
+
+        <!-- Mostrar mensajes de error/success -->
+        <div *ngIf="errorMessage" class="error-text" style="text-align: center; margin-top: 1rem;">
+          {{ errorMessage }}
+        </div>
+
+        <div *ngIf="successMessage" class="success-text" style="text-align: center; margin-top: 1rem; color: green;">
+          {{ successMessage }}
+        </div>
 
         <div class="login-link">
           <p>¿Ya tienes una cuenta? <a (click)="goToLogin()">Inicia Sesión</a></p>
@@ -189,10 +200,19 @@ import { Router } from '@angular/router';
     .login-link a:hover {
       text-decoration: underline;
     }
+
+    .success-text {
+      color: #28a745;
+      font-size: 0.9rem;
+      text-align: center;
+    }
   `]
 })
 export class RegisterComponent implements OnInit {
   form!: FormGroup;
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -232,29 +252,46 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
     const payload = { ...this.form.value };
-    // Eliminar el campo de confirmación que no va al backend
+
     delete payload.confirmar_contrasena;
 
-    // CONVERTIR edad a string (el backend espera string)
-    payload.edad = payload.edad.toString();
 
-    console.log('Payload registro:', JSON.stringify(payload, null, 2));
+    if (payload.edad) {
+      payload.edad = payload.edad.toString();
+    }
 
-    // Llamar al servicio de registro
+    console.log('Payload registro:', payload);
+
     this.auth.register(payload).subscribe({
       next: (response) => {
         console.log('Registro exitoso:', response);
-        alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
-        this.router.navigate(['/auth/login']);
+        this.isLoading = false;
+        this.successMessage = '¡Registro exitoso! Ahora puedes iniciar sesión.';
+
+
+        setTimeout(() => {
+          this.router.navigate(['/auth/login']);
+        }, 2000);
       },
       error: (err) => {
-        console.error('Error completo en registro:', err);
-        console.error('Status:', err.status);
-        console.error('Error details:', err.error);
+        console.error('Error en registro:', err);
+        this.isLoading = false;
 
-        const errorDetails = err.error?.detail || err.error?.message || JSON.stringify(err.error);
-        alert(`Error en registro: ${errorDetails}`);
+
+        if (err.status === 400) {
+          this.errorMessage = err.error?.detail || 'Datos inválidos. Verifica la información.';
+        } else if (err.status === 409) {
+          this.errorMessage = 'El usuario o email ya existe.';
+        } else if (err.status === 0) {
+          this.errorMessage = 'No se pudo conectar al servidor. Verifica tu conexión.';
+        } else {
+          this.errorMessage = err.error?.detail || err.error?.message || 'Error en el registro. Intenta nuevamente.';
+        }
       }
     });
   }

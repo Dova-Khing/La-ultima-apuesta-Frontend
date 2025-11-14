@@ -75,7 +75,7 @@ import { Router } from '@angular/router';
       text-align: center;
     }
 
-    
+
     .titulo-login {
         font-size: 2rem;
         font-weight: 600;
@@ -208,7 +208,7 @@ export class LoginComponent implements OnInit {
       contrasena: ['', [Validators.required, Validators.minLength(8)]],
     });
 
-    // Verificar si ya está logueado pero NO redirigir automáticamente
+
     this.isLoggedIn = this.auth.isLoggedIn();
   }
 
@@ -224,7 +224,7 @@ export class LoginComponent implements OnInit {
     this.auth.login(payload).subscribe({
       next: (response) => {
         console.log('Login exitoso:', response);
-        this.auth.storeTokens(response);
+        this.auth.storeToken(response.access_token);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
@@ -246,7 +246,7 @@ export class LoginComponent implements OnInit {
   logout(): void {
     this.auth.logout();
     this.isLoggedIn = false;
-    // Recargar para limpiar completamente el estado
+
     setTimeout(() => {
       window.location.reload();
     }, 100);
