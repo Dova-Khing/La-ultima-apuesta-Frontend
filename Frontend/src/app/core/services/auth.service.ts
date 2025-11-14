@@ -45,4 +45,10 @@ export class AuthService {
     localStorage.removeItem('access_token');
     this.router.navigate(['/auth/login']);
   }
+
+  // Método adicional para obtener el usuario actual
+  getCurrentUser(): any {
+    const usuario = localStorage.getItem('usuario');
+    return usuario ? JSON.parse(usuario) : null;
+  }
 }
