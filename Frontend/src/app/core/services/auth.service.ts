@@ -1,49 +1,40 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment.api';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private baseUrl = environment.api;
-  constructor(private http: HttpClient) { }
+  private apiUrl = 'http://localhost:8000';
+
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(credentials: { nombre_usuario: string; contrasena: string }): Observable<any> {
-    return this.http.post<any>(
-      `${this.baseUrl}/auth/login`,
-      credentials
+
+    return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials).pipe(
+      tap(response => {
+        console.log('Respuesta del login:', response);
+
+        this.storeToken('token_temporal_' + Date.now());
+      })
     );
   }
 
-  register(userData: {
-    nombre: string;
-    nombre_usuario: string;
-    email: string;
-    contrasena: string;
-    telefono?: string;
-    edad: string;
-    saldo_inicial: number;
-  }): Observable<any> {
-    return this.http.post<any>(
-      `${this.baseUrl}/auth/registro`,
-      userData
-    );
+  register(userData: any): Observable<any> {
+
+    return this.http.post<any>(`${this.apiUrl}/auth/registro`, userData);
   }
 
-
-  storeTokens(usuario: any): void {
-
-    localStorage.setItem('usuario', JSON.stringify(usuario));
-
-
+  storeToken(token: string): void {
+    localStorage.setItem('access_token', token);
+    console.log('Token almacenado:', token);
   }
 
   getToken(): string | null {
-
-    return localStorage.getItem('usuario');
+    return localStorage.getItem('access_token');
   }
 
   isLoggedIn(): boolean {
@@ -51,10 +42,8 @@ export class AuthService {
   }
 
   logout(): void {
-    // Limpiar toda la información de autenticación
-    localStorage.removeItem('usuario');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/auth/login']);
   }
 
   // Método adicional para obtener el usuario actual
